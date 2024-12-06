@@ -19,3 +19,8 @@ Why did I decide to rotate the arrays, this is so ugly, urgh. It works though
 Sets and recursion, I like this solution. Clean, precise, good.
 
 I'm very surprised that almost everything worked first time without tweaking. I was sure my inserts were going to need more index tweaking. I think, depending on my input set the recursion could go endlessly, but, unlikely, maybe.
+
+## Day 6
+I think this was the first really challenging one, you need to think some thonks to figure this one out. My first approach was not good (check `day06_derp.py`), essentially I was only searching for obstacles which would get you in a loop by entering you into an already travelled path. This was pretty close to the right answer (1611 vs 1705) all things considered, and was of course, very fast.
+
+The actual solution is not too bad. I had a brief error where I assumed I can't place any obstacles in line of sight of the starting position of the guard, but happily that was not the case.
