@@ -24,3 +24,8 @@ I'm very surprised that almost everything worked first time without tweaking. I 
 I think this was the first really challenging one, you need to think some thonks to figure this one out. My first approach was not good (check `day06_derp.py`), essentially I was only searching for obstacles which would get you in a loop by entering you into an already travelled path. This was pretty close to the right answer (1611 vs 1705) all things considered, and was of course, very fast.
 
 The actual solution is not too bad. I had a brief error where I assumed I can't place any obstacles in line of sight of the starting position of the guard, but happily that was not the case.
+
+## Day 7
+I started by trying something fancy but half arsing it, then seeing brute forcing it is reasonaly quick if done well, I had a solution which executed in 33s. After finding a bug making the search tree unnecesarily big, that was brought down to 8s.
+
+Then while in the shower tonight I suddenly realised how to do the fancy thing, and, well, here we are. Speedy!
