@@ -1,55 +1,32 @@
 from utils import read_to_array
-from itertools import product
 
-def value_of_equation(line: str) -> int:
-    total: int = int(line.split(":")[0].strip())
-    numbers: list[int] = [int(x.strip()) for x in line.split(":")[-1].split(" ") if x != ""]
+def is_equation_valid(current_total: int, r_operands: list[int], part_2: bool = False) -> bool:
+    if len(r_operands) == 0:
+        return False
+    
+    first_operand: int = r_operands[0]
+    remaining_operands: list[int] = r_operands[1:]
 
-    operators: product = product(["*", "+"], repeat=len(numbers))
+    if len(r_operands) == 1:
+        if first_operand == current_total:
+            return True
 
-    for operator_set in operators:
-        sum: int = numbers[0]
-        for operator, number in zip(operator_set, numbers[1:]):
-            match operator:
-                case "*":
-                    sum *= number
-                case "+":
-                    sum += number
+    if current_total < first_operand:
+        return False
+    
+    operation_results: list[bool] = []
+    
+    operation_results.append(is_equation_valid(current_total - first_operand, remaining_operands, part_2))
 
-            if sum > total:
-                break
+    if (current_total / first_operand) == (current_total // first_operand):
+        operation_results.append(is_equation_valid(current_total // first_operand, remaining_operands, part_2))
 
-        if sum == total:
-            return total
-        
-    return 0
+    if part_2:
+        if len(str(current_total)) != len(str(first_operand)):
+            if int(str(current_total)[-len(str(first_operand)):]) == first_operand:
+                operation_results.append(is_equation_valid(int(str(current_total)[:-len(str(first_operand))]), remaining_operands, part_2))
 
-def value_of_equation_part_2(line: str) -> int:
-    total: int = int(line.split(":")[0].strip())
-    numbers: list[int] = [int(x.strip()) for x in line.split(":")[-1].split(" ") if x != ""]
-
-    operators: product = product(["*", "+", "||"], repeat=len(numbers))
-
-    for operator_set in operators:
-        if "||" not in operator_set:
-            continue
-        sum: int = numbers[0]
-        for operator, number in zip(operator_set, numbers[1:]):
-            match operator:
-                case "*":
-                    sum *= number
-                case "+":
-                    sum += number
-                case "||":
-                    sum = int(f"{sum}{number}")
-
-            if sum > total:
-                break
-
-        if sum == total:
-            return total
-        
-    return 0
+    return any(operation_results)
 
 def day07(path: str = "data/day07.txt"):
     calibrations: list[str] = read_to_array(path)
@@ -57,15 +34,19 @@ def day07(path: str = "data/day07.txt"):
     sum_p1: int = 0
     sum_p2: int = 0
     for calibration in calibrations:
-        p1 = value_of_equation(calibration)
-        sum_p1 += p1
-        if p1 == 0:
-            sum_p2 += value_of_equation_part_2(calibration)
-        else:
-            sum_p2 += p1
+        total: int = int(calibration.split(":")[0].strip())
+        numbers: list[int] = [int(x.strip()) for x in calibration.split(":")[-1].split(" ") if x != ""]
+        numbers.reverse()
 
-    print(sum_p1)
-    print(sum_p2)
+        if is_equation_valid(total,  numbers):
+            sum_p1 += total
+            sum_p2 += total
+        else:
+            if is_equation_valid(total, numbers, part_2=True):
+                sum_p2 += total
+
+    print(f"Day 7 - Part 1: {sum_p1}")
+    print(f"Day 7 - Part 2: {sum_p2}")
 
 
 
