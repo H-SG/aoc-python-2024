@@ -57,8 +57,8 @@ def day08(path: str = "data/day08.txt"):
     antenna_map: list[str] = read_to_array(path)
 
     antenna_dict: dict[str, list[tuple[int, int]]] = {}
-    antinodes_p1: list[tuple[int, int]] = []
-    antinodes_p2: list[tuple[int, int]] = []
+    antinodes_p1: set[tuple[int, int]] = set()
+    antinodes_p2: set[tuple[int, int]] = set()
 
     max_x: int = len(antenna_map[0]) - 1
     max_y: int = len(antenna_map) - 1
@@ -84,16 +84,11 @@ def day08(path: str = "data/day08.txt"):
             antinode_p2: list[tuple[int, int]] = get_antinodes(ant1, ant2, max_x, max_y, multiple=True)
 
             for node in antinode_p1:
-                if node in antinodes_p1:
-                    continue
-
-                antinodes_p1.append(node)
+                antinodes_p1.add(node)
 
             for node in antinode_p2:
-                if node in antinodes_p2:
-                    continue
-
-                antinodes_p2.append(node)
+                antinodes_p2.add(node)
+                
 
     print(f"Day 8 - Part 1: {len(antinodes_p1)}")
     print(f"Day 8 - Part 2: {len(antinodes_p2)}")
