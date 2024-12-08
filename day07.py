@@ -48,8 +48,6 @@ def day07(path: str = "data/day07.txt"):
     print(f"Day 7 - Part 1: {sum_p1}")
     print(f"Day 7 - Part 2: {sum_p2}")
 
-
-
 if __name__ == "__main__":
     print("Test")
     day07("test/day07.txt")

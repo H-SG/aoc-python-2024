@@ -29,3 +29,6 @@ The actual solution is not too bad. I had a brief error where I assumed I can't 
 I started by trying something fancy but half arsing it, then seeing brute forcing it is reasonaly quick if done well, I had a solution which executed in 33s. After finding a bug making the search tree unnecesarily big, that was brought down to 8s.
 
 Then while in the shower tonight I suddenly realised how to do the fancy thing, and, well, here we are. Speedy!
+
+## Day 8
+I had a vague idea what part 2 would be, but it was easier than expected. Nice little solution in the end. I got stuck for a few minutes not grokking that I have to include antenna positions as nodes in part 2.
