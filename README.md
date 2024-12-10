@@ -32,3 +32,9 @@ Then while in the shower tonight I suddenly realised how to do the fancy thing, 
 
 ## Day 8
 I had a vague idea what part 2 would be, but it was easier than expected. Nice little solution in the end. I got stuck for a few minutes not grokking that I have to include antenna positions as nodes in part 2.
+
+## Day 9
+No big comments, was pretty easy, didn't feel like doing any kind of optimisation
+
+## Day 10
+Started very late, lots of personal life got in the way. Humourously I accidentally solved P2 while writing P1, not realising P1 only asked for number of ends and not paths.
