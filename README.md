@@ -38,3 +38,6 @@ No big comments, was pretty easy, didn't feel like doing any kind of optimisatio
 
 ## Day 10
 Started very late, lots of personal life got in the way. Humourously I accidentally solved P2 while writing P1, not realising P1 only asked for number of ends and not paths. Could probably halve the execution time by combining the two searches with some good handling of the data being passed around, but I am le tired.
+
+## Day 11
+More recursion! Spent some time debugging to find a rogue +1 I kept glossing over. Quick enough for P1, dog slow for P2. Rethought it a bit and the solution is as you see it.
