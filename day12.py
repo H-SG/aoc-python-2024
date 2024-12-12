@@ -1,65 +1,5 @@
 from utils import read_to_array
 
-# def print_perim_map(perim_map: list[list[int]]):
-#     print_str: str = ""
-#     for string in perim_map:
-#         print_str += f"{"".join([str(x) for x in string])}\n"
-
-#     print(print_str)
-
-# def get_sum_perim_map(perim_map: list[list[int]]) -> int:
-#     corners: int = 0
-#     for row in perim_map:
-#         corners += sum([x for x in row])
-
-#     return corners
-
-# def get_perim_map(region: set[tuple[int, int, str]]) -> list[list[int]]:
-#     max_x = max([x for x, *_ in region]) + 2
-#     max_y = max([y for _, y, _ in region]) + 2
-
-#     perim_map: list[list[int]] = [[0 for x in range(max_x)] for y in range(max_y)]
-
-#     for plot in region:
-#         perim_map[plot[1]][plot[0]] = 0
-
-#     return perim_map
-
-def get_sides_from_stranger(region: list[tuple[int, int]]) -> int:
-    min_r = min(r for r, c in region)
-    max_r = max(r for r, c in region)
-    min_c = min(c for r, c in region)
-    max_c = max(c for r, c in region)
-
-    total = 0
-
-    edges = dict()
-    for row in range(min_r, max_r + 1):
-        prev_in = False
-        next_edges = dict()
-        for col in range(min_c, max_c + 2):
-            if ((row, col) in region) != prev_in:
-                prev_in = not prev_in
-                next_edges[col] = prev_in
-                if edges.get(col) != prev_in:
-                    total += 1
-        edges = next_edges
-
-    edges = dict()
-    for col in range(min_c, max_c + 1):
-        prev_in = False
-        next_edges = dict()
-        for row in range(min_r, max_r + 2):
-            if ((row, col) in region) != prev_in:
-                prev_in = not prev_in
-                next_edges[row] = prev_in
-                if edges.get(row) != prev_in:
-                    total += 1
-        edges = next_edges
-
-    # print(f"Sides: {total}")
-    return total
-
 def print_region(region: set[tuple[int, int, str]]):
     max_x = max([x for x, *_ in region]) + 1
     max_y = max([y for _, y, _ in region]) + 1
@@ -74,6 +14,7 @@ def print_region(region: set[tuple[int, int, str]]):
         print_str += f"{"".join(string)}\n"
 
     print(print_str)
+
 
 def get_region(current_plot: tuple[int, int, str], region_plots: set[tuple[int, int, str]], available_plots: set[tuple[int, int, str]]) -> set[tuple[int, int, str]]:
     region_plots.add(current_plot)
@@ -94,49 +35,63 @@ def get_region(current_plot: tuple[int, int, str], region_plots: set[tuple[int, 
     return region_plots
 
 
-def get_sides_following_path(perimeters: list[tuple[int, int]]) -> int:
-    perims: set = set(perimeters)
+def get_num_uncontiguous_sides(sides: set[tuple[int, int]], type: str) -> int:
+    sides_count: int = 0
+    while len(sides) > 0:
+        current_side: tuple[int, int] = sides.pop()
+        sides_count += 1
 
+        match type:
+            case "vert":
+                up_neighbour: tuple[int, int] = (current_side[0], current_side[1] - 1)
+                down_neighbour: tuple[int, int] = (current_side[0], current_side[1] + 1)
+
+                while up_neighbour in sides:
+                    sides.remove(up_neighbour)
+                    up_neighbour = (up_neighbour[0], up_neighbour[1] - 1)
+
+                while down_neighbour in sides:
+                    sides.remove(down_neighbour)
+                    down_neighbour = (down_neighbour[0], down_neighbour[1] + 1)
+            case "hor":
+                left_neighbour: tuple[int, int] = (current_side[0] - 1, current_side[1])
+                right_neighbour: tuple[int, int] = (current_side[0] + 1, current_side[1])
+
+                while left_neighbour in sides:
+                    sides.remove(left_neighbour)
+                    left_neighbour = (left_neighbour[0] - 1, right_neighbour[1])
+                while right_neighbour in sides:
+                    sides.remove(right_neighbour)
+                    right_neighbour = (right_neighbour[0] + 1, right_neighbour[1])
+
+    return sides_count
+
+
+def get_num_sides(region: set[tuple[int, int]]) -> int:
+    left_sides: set[tuple[int, int]] = set()
+    right_sides: set[tuple[int, int]] = set()
+    top_sides: set[tuple[int, int]] = set()
+    bottom_sides: set[tuple[int, int]] = set()
     
+    for plot in region:
+        left: tuple[int, int] = (plot[0] - 1, plot[1])
+        right: tuple[int, int] = (plot[0] + 1, plot[1])
+        top: tuple[int, int] = (plot[0], plot[1] - 1)
+        bottom: tuple[int, int] = (plot[0], plot[1] + 1)
 
-def get_sides(perimeters: list[tuple[int, int]]) -> int:
-    perims = [p for p in perimeters]
-    sides: int = 0
-    while len(perimeters) > 0:
-        sides += 1
-        current_perimeter: tuple[int, int] = perimeters.pop()
-        removed: list[tuple[int, int]] = [current_perimeter]
+        if top not in region:
+            top_sides.add(top)
 
-        left_perim: tuple[int, int] = (current_perimeter[0] - 1, current_perimeter[1])
-        right_perim: tuple[int, int] = (current_perimeter[0] + 1, current_perimeter[1])
-        up_perim: tuple[int, int] = (current_perimeter[0], current_perimeter[1] - 1)
-        down_perim: tuple[int, int] = (current_perimeter[0], current_perimeter[1] + 1)
+        if left not in region:
+            left_sides.add(left)
 
-        if (left_perim in perimeters) or (right_perim in perimeters):
-            while left_perim in perimeters:
-                perimeters.remove(left_perim)
-                removed.append(left_perim)
-                left_perim = (left_perim[0] - 1, left_perim[1])
+        if right not in region:
+            right_sides.add(right)
 
-            while right_perim in perimeters:
-                perimeters.remove(right_perim)
-                removed.append(right_perim)
-                right_perim = (right_perim[0] + 1, right_perim[1])
-        elif (up_perim in perimeters) or (down_perim in perimeters):
-            while up_perim in perimeters:
-                perimeters.remove(up_perim)
-                removed.append(up_perim)
-                up_perim = (up_perim[0], up_perim[1] - 1)
+        if bottom not in region:
+            bottom_sides.add(bottom)
 
-            while down_perim in perimeters:
-                perimeters.remove(down_perim)
-                removed.append(down_perim)
-                down_perim = (down_perim[0], down_perim[1] + 1)
-
-    if sides == 79:
-        pass
-    return sides
-
+    return get_num_uncontiguous_sides(left_sides, "vert") + get_num_uncontiguous_sides(right_sides, "vert") + get_num_uncontiguous_sides(top_sides, "hor") + get_num_uncontiguous_sides(bottom_sides, "hor")
 
 
 def day12(path: str = "data/day12.txt"):
@@ -162,7 +117,6 @@ def day12(path: str = "data/day12.txt"):
     for region in regions:
         area: int = 0
         perimeter: int = 0
-        perimeter_points: list[tuple[int, int]] = []
         for plot in region:
             type: str = plot[2]
             area += 1
@@ -171,33 +125,27 @@ def day12(path: str = "data/day12.txt"):
             right_plot: tuple[int, int] = (plot[0] + 1, plot[1])
             up_plot: tuple[int, int] = (plot[0], plot[1] - 1)
             down_plot: tuple[int, int] = (plot[0], plot[1] + 1)
-
-            neighbour_plots: list[tuple[int, int]] = [(left_plot), right_plot, up_plot, down_plot]
-
-            for n_plot in neighbour_plots:
+            
+            for n_plot in [left_plot, right_plot, up_plot, down_plot]:
                 if n_plot not in neighbour_type:
                     perimeter += 1
-                    perimeter_points.append(n_plot)
-                elif neighbour_type[n_plot] != type:
+                    continue
+                    
+                if neighbour_type[n_plot] != type:
                     perimeter += 1
-                    perimeter_points.append(n_plot)
+                    continue
 
-        stranger_sides: int = get_sides_from_stranger(([(r[1], r[0]) for r in region]))
-        sides: int = get_sides(perimeter_points)
-        assert sides == stranger_sides
+        # print_region(region)
+        sides: int = get_num_sides(set([(r[0], r[1]) for r in region]))
         regions_area_sides_perimeter.append((area, perimeter, sides))
 
-    print(sum([area * perimeter for area, perimeter, _ in regions_area_sides_perimeter]))
-    print(sum([area * sides for area, _, sides in regions_area_sides_perimeter]))
+    print(f"Day 12 - Part 1: {sum([area * perimeter for area, perimeter, _ in regions_area_sides_perimeter])}")
+    print(f"Day 12 - Part 2: {sum([area * sides for area, _, sides in regions_area_sides_perimeter])}")
 
 
 if __name__ == "__main__":
-    # print("Test")
-    # day12("test/day12.txt")
-    # print("Problem")
-    # # day12("data/day12.txt")
+    print("Test")
+    day12("test/day12.txt")
+    print("Problem")
+    day12("data/day12.txt")
     # day12("test/day12debug.txt")
-
-    bad_input: list[tuple[int, int]] = [(97, 91), (97, 93), (89, 97), (99, 102), (96, 87), (95, 88), (88, 100), (91, 86), (90, 85), (98, 105), (97, 106), (93, 107), (92, 108), (86, 95), (92, 96), (91, 97), (88, 100), (88, 102), (96, 89), (95, 88), (84, 89), (86, 83), (96, 93), (95, 94), (84, 91), (93, 98), (95, 98), (94, 97), (89, 105), (90, 106), (98, 91), (98, 93), (91, 86), (88, 85), (94, 94), (88, 103), (89, 104), (93, 94), (92, 98), (97, 100), (95, 106), (94, 107), (84, 85), (97, 91), (96, 90), (92, 105), (85, 93), (86, 94), (88, 86), (89, 85), (88, 86), (99, 101), (98, 100), (88, 99), (89, 98), (86, 94), (93, 107), (95, 106), (99, 104), (98, 105), (89, 97), (91, 97), (90, 107), (91, 108), (94, 85), (93, 84), (88, 97), (84, 84), (85, 83), (92, 95), (96, 99), (95, 98), (92, 105), (96, 106), (89, 98), (91, 98), (92, 105), (96, 90), (84, 90), (85, 96), (86, 95), (86, 97), (94, 85), (97, 100), (96, 99), (93, 98), (89, 104), (91, 98), (84, 92), (85, 93), (95, 88), (93, 94), (92, 95), (88, 102), (83, 86), (84, 85), (86, 97), (88, 97), (87, 98), (88, 86), (91, 86), (91, 85), (92, 84), (88, 84), (87, 83), (92, 105), (96, 93), (86, 101), (87, 100), (87, 102), (100, 103), (99, 102), (99, 104), (100, 92), (99, 91), (99, 93), (83, 87), (84, 88), (90, 106), (96, 86), (95, 85), (84, 88)]
-    sides: int = get_sides(bad_input)
-    pass
